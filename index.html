@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Max Benson | Portfolio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --accent: #3498db;
+            --accent-dark: #2980b9;
+            --light-bg: #f8f9fa;
+            --dark-bg: #1a1a2e;
+        }
+
+        * { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #333;
+            line-height: 1.7;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: rgba(26, 26, 46, 0.95) !important;
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+        .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: #fff !important;
+        }
+        .nav-link {
+            color: rgba(255,255,255,0.85) !important;
+            font-weight: 500;
+            margin: 0 0.5rem;
+            transition: color 0.3s;
+        }
+        .nav-link:hover, .nav-link.active { color: #3498db !important; }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(52,152,219,0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            color: #fff;
+            margin-bottom: 1rem;
+        }
+        .hero .lead {
+            color: rgba(255,255,255,0.8);
+            font-size: 1.25rem;
+            max-width: 600px;
+        }
+        .hero .btn-primary {
+            background: var(--accent);
+            border: none;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            border-radius: 50px;
+            transition: all 0.3s;
+        }
+        .hero .btn-primary:hover {
+            background: var(--accent-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(52,152,219,0.3);
+        }
+        .hero .btn-outline-light {
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            border-radius: 50px;
+            transition: all 0.3s;
+        }
+
+        /* About Section */
+        .about-section { padding: 6rem 0; }
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background: var(--accent);
+            margin-top: 0.75rem;
+        }
+        .about-img {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        }
+        .stat-card {
+            text-align: center;
+            padding: 1.5rem;
+        }
+        .stat-card h3 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        /* Skills Section */
+        .skills-section {
+            background: var(--light-bg);
+            padding: 6rem 0;
+        }
+        .skill-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s;
+            border: 1px solid #eee;
+            height: 100%;
+        }
+        .skill-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        }
+        .skill-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.25rem;
+            font-size: 1.75rem;
+            color: #fff;
+        }
+        .progress { height: 8px; border-radius: 4px; }
+        .progress-bar {
+            background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+            border-radius: 4px;
+        }
+
+        /* Projects Section */
+        .projects-section { padding: 6rem 0; }
+        .project-card {
+            border: none;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+        .project-card .card-img-top {
+            height: 200px;
+            object-fit: cover;
+        }
+        .badge-tech {
+            background: rgba(52,152,219,0.1);
+            color: var(--accent);
+            padding: 0.35rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* Contact Section */
+        .contact-section {
+            background: var(--dark-bg);
+            padding: 6rem 0;
+            color: #fff;
+        }
+        .contact-section .section-title { color: #fff; }
+        .contact-section .section-title::after { background: var(--accent); }
+        .contact-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .contact-card:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-3px);
+        }
+        .contact-card i {
+            font-size: 2rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+        .contact-form .form-control {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #fff;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+        }
+        .contact-form .form-control:focus {
+            background: rgba(255,255,255,0.08);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 0.2rem rgba(52,152,219,0.25);
+            color: #fff;
+        }
+        .contact-form .form-control::placeholder { color: rgba(255,255,255,0.4); }
+
+        /* Footer */
+        footer {
+            background: #111;
+            padding: 2rem 0;
+            color: rgba(255,255,255,0.6);
+        }
+        footer a { color: var(--accent); text-decoration: none; }
+        footer a:hover { color: #fff; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .section-title { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">Max Benson</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link active" href="#home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#skills">Skills</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#projects">Projects</a></li>
+                    <li class="nav-item"><a class="nav-link" href="resume.html">Resume</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+                    <li class="nav-item"><a class="nav-link" href="app.html">Fitness App</a></li>
+                    <li class="nav-item"><a class="nav-link" href="scratch.html#data">Sales Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="scratch.html">Scratch Page</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-7">
+                    <p class="text-uppercase fw-semibold" style="color: var(--accent); letter-spacing: 3px; font-size: 0.9rem;">Welcome to my portfolio</p>
+                    <h1>Hi, I'm Max Benson</h1>
+                    <p class="lead mb-4">A driven professional with a passion for technology, business, and creative problem-solving. Currently pursuing my degree and building skills that bridge analytics and innovation.</p>
+                    <a href="#about" class="btn btn-primary me-3">Learn More</a>
+                    <a href="resume.html" class="btn btn-outline-light">View Resume</a>
+                </div>
+                <div class="col-lg-5 text-center mt-5 mt-lg-0">
+                    <img src="max-headshot.png" alt="Max Benson" style="width: 300px; height: 300px; border-radius: 50%; object-fit: cover; object-position: center center; box-shadow: 0 20px 60px rgba(0,0,0,0.3); border: 4px solid rgba(52,152,219,0.4);">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-5 mb-4 mb-lg-0 text-center">
+                    <img src="max-headshot.png" alt="Max Benson" class="about-img">
+                </div>
+                <div class="col-lg-7">
+                    <h2 class="section-title">About Me</h2>
+                    <p>I'm a Pre-Business student at BYU's Marriott School of Business with a 3.89 GPA and hands-on experience in finance, sales, and marketing. Currently interning at Stonebriar Financial, where I support portfolio management, compliance workflows, and client account operations.</p>
+                    <p>A four-time state wrestling champion, I bring the same discipline and competitive drive to my professional career. I'm fluent in Spanish after two years of full-time immersion in Argentina, and I'm active in BYU's Finance Society and Private Banking &amp; Wealth Management Association.</p>
+                    <div class="row mt-4">
+                        <div class="col-4 stat-card">
+                            <h3>3.89</h3>
+                            <p class="text-muted mb-0">GPA</p>
+                        </div>
+                        <div class="col-4 stat-card">
+                            <h3>5+</h3>
+                            <p class="text-muted mb-0">Projects</p>
+                        </div>
+                        <div class="col-4 stat-card">
+                            <h3>2+</h3>
+                            <p class="text-muted mb-0">Internships</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="skills-section">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title d-inline-block">Skills &amp; Expertise</h2>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="skill-card">
+                        <div class="skill-icon"><i class="bi bi-bank2"></i></div>
+                        <h5 class="fw-semibold">Finance &amp; Wealth Management</h5>
+                        <p class="text-muted">Hands-on experience with transactions, fund transfers, portfolio updates, and compliance processes at Stonebriar Financial. Proficient in Fidelity Wealthscape and Schwab Agent Portal.</p>
+                        <div class="progress mt-3"><div class="progress-bar" style="width: 85%"></div></div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="skill-card">
+                        <div class="skill-icon"><i class="bi bi-handshake-fill"></i></div>
+                        <h5 class="fw-semibold">Sales &amp; Client Relations</h5>
+                        <p class="text-muted">Proven ability to generate new business through direct outreach, present value propositions, and close in competitive commission-based environments.</p>
+                        <div class="progress mt-3"><div class="progress-bar" style="width: 90%"></div></div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="skill-card">
+                        <div class="skill-icon"><i class="bi bi-megaphone-fill"></i></div>
+                        <h5 class="fw-semibold">Marketing &amp; Outreach</h5>
+                        <p class="text-muted">Managed social media, email, and mailer campaigns. Conducted market research to identify target audiences and build referral networks across medical and legal markets.</p>
+                        <div class="progress mt-3"><div class="progress-bar" style="width: 80%"></div></div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="skill-card">
+                        <div class="skill-icon"><i class="bi bi-people-fill"></i></div>
+                        <h5 class="fw-semibold">Leadership &amp; Coaching</h5>
+                        <p class="text-muted">Led teams of volunteers across Argentina. Coached 50+ student-athletes as an assistant wrestling coach. Four-time state wrestling champion with a competitive, goal-driven mindset.</p>
+                        <div class="progress mt-3"><div class="progress-bar" style="width: 95%"></div></div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="skill-card">
+                        <div class="skill-icon"><i class="bi bi-translate"></i></div>
+                        <h5 class="fw-semibold">Spanish (Professional)</h5>
+                        <p class="text-muted">BYU language certificate in Spanish at business proficiency level. Developed through two years of full-time immersion in Santa Fe, Argentina.</p>
+                        <div class="progress mt-3"><div class="progress-bar" style="width: 88%"></div></div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="skill-card">
+                        <div class="skill-icon"><i class="bi bi-gear-fill"></i></div>
+                        <h5 class="fw-semibold">Operations &amp; Process Improvement</h5>
+                        <p class="text-muted">Identified workflow inefficiencies and implemented improvements in financial and warehouse settings. Strong attention to detail in compliance, documentation, and inventory management.</p>
+                        <div class="progress mt-3"><div class="progress-bar" style="width: 78%"></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="projects-section">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title d-inline-block">Featured Projects</h2>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <a href="scratch.html#data" style="text-decoration: none;">
+                        <div class="card project-card h-100" style="cursor: pointer;">
+                            <div style="height: 200px; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center;">
+                                <i class="bi bi-clipboard-data" style="font-size: 4rem; color: rgba(255,255,255,0.8);"></i>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title fw-semibold">Sales Dashboard</h5>
+                                <p class="card-text text-muted">Built an interactive Tableau dashboard tracking KPIs for a retail dataset with drill-down capabilities.</p>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <span class="badge-tech">Tableau</span>
+                                    <span class="badge-tech">SQL</span>
+                                    <span class="badge-tech">Excel</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <div class="card project-card h-100">
+                        <div style="height: 200px; background: linear-gradient(135deg, #f093fb, #f5576c); display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-globe" style="font-size: 4rem; color: rgba(255,255,255,0.8);"></i>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title fw-semibold">Portfolio Website</h5>
+                            <p class="card-text text-muted">Designed and developed this responsive portfolio website using Bootstrap 5 and custom CSS.</p>
+                            <div class="d-flex flex-wrap gap-2">
+                                <span class="badge-tech">HTML</span>
+                                <span class="badge-tech">CSS</span>
+                                <span class="badge-tech">Bootstrap</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <a href="app.html" style="text-decoration: none;">
+                        <div class="card project-card h-100" style="cursor: pointer;">
+                            <div style="height: 200px; background: linear-gradient(135deg, #4facfe, #00f2fe); display: flex; align-items: center; justify-content: center;">
+                                <i class="bi bi-calculator" style="font-size: 4rem; color: rgba(255,255,255,0.8);"></i>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title fw-semibold">Fitness Simulator</h5>
+                                <p class="card-text text-muted">An AI-assisted web app that calculates fitness metrics and generates personalized workout plans.</p>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <span class="badge-tech">JavaScript</span>
+                                    <span class="badge-tech">HTML</span>
+                                    <span class="badge-tech">CSS</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title d-inline-block">Get In Touch</h2>
+            </div>
+            <div class="row g-4 mb-5">
+                <div class="col-md-4">
+                    <div class="contact-card">
+                        <i class="bi bi-envelope-fill d-block"></i>
+                        <h6 class="fw-semibold">Email</h6>
+                        <p class="text-white-50 mb-0">maxpower@bensonrec.com</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="contact-card">
+                        <i class="bi bi-geo-alt-fill d-block"></i>
+                        <h6 class="fw-semibold">Location</h6>
+                        <p class="text-white-50 mb-0">Provo, UT</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <a href="https://www.linkedin.com/in/max-benson-2b4841351/" target="_blank" style="text-decoration: none;">
+                    <div class="contact-card">
+                        <i class="bi bi-linkedin d-block"></i>
+                        <h6 class="fw-semibold">LinkedIn</h6>
+                        <p class="text-white-50 mb-0">linkedin.com/in/max-benson</p>
+                    </div>
+                    </a>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <form class="contact-form">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" placeholder="Your Name">
+                            </div>
+                            <div class="col-md-6">
+                                <input type="email" class="form-control" placeholder="Your Email">
+                            </div>
+                            <div class="col-12">
+                                <input type="text" class="form-control" placeholder="Subject">
+                            </div>
+                            <div class="col-12">
+                                <textarea class="form-control" rows="5" placeholder="Your Message"></textarea>
+                            </div>
+                            <div class="col-12 text-center">
+                                <button type="submit" class="btn btn-primary px-5 py-2" style="background: var(--accent); border: none; border-radius: 50px; font-weight: 600;">Send Message</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2026 Max Benson. All rights reserved. | <a href="resume.html">Resume</a></p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.padding = '0.5rem 0';
+                navbar.style.boxShadow = '0 2px 20px rgba(0,0,0,0.3)';
+            } else {
+                navbar.style.padding = '1rem 0';
+                navbar.style.boxShadow = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitCalc | Fitness Simulator</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0b0c10 0%, #1f2833 50%, #0b0c10 100%);
+            min-height: 100vh;
+            color: #c5c6c7;
+            overflow-x: hidden;
+        }
+
+        /* Nav */
+        .app-nav {
+            background: rgba(31, 40, 51, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(102, 252, 241, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.4);
+        }
+        .app-nav .brand {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #66fcf1;
+            letter-spacing: 2px;
+        }
+        .app-nav .nav-links-right {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        .app-nav a {
+            color: #c5c6c7;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.3s;
+        }
+        .app-nav a:hover { color: #66fcf1; }
+        .app-nav a.active-page { color: #66fcf1; }
+
+        .app-container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .app-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .app-header h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #66fcf1;
+            margin-bottom: 0.5rem;
+        }
+        .app-header p { color: #c5c6c7; font-size: 1.05rem; }
+
+        /* Tabs */
+        .tab-container {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .tab-btn {
+            padding: 0.7rem 1.5rem;
+            border: 2px solid rgba(102, 252, 241, 0.3);
+            background: transparent;
+            color: #c5c6c7;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+        .tab-btn:hover {
+            border-color: #66fcf1;
+            color: #66fcf1;
+        }
+        .tab-btn.active {
+            background: #66fcf1;
+            color: #0b0c10;
+            border-color: #66fcf1;
+        }
+
+        /* Cards */
+        .calc-card {
+            background: rgba(31, 40, 51, 0.8);
+            border: 1px solid rgba(102, 252, 241, 0.1);
+            border-radius: 16px;
+            padding: 2.5rem;
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+        .calc-card.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .calc-card h2 {
+            color: #66fcf1;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .calc-card .subtitle {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            color: #c5c6c7;
+            font-size: 0.9rem;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(11, 12, 16, 0.6);
+            border: 1px solid rgba(102, 252, 241, 0.2);
+            border-radius: 10px;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #66fcf1;
+            box-shadow: 0 0 0 3px rgba(102, 252, 241, 0.15);
+        }
+        .form-group select option { background: #1f2833; }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.3rem;
+        }
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            cursor: pointer;
+            font-weight: 400;
+        }
+        .radio-group input[type="radio"] { accent-color: #66fcf1; }
+
+        /* Buttons */
+        .calc-btn {
+            width: 100%;
+            padding: 0.9rem;
+            background: linear-gradient(135deg, #66fcf1, #45a29e);
+            border: none;
+            border-radius: 10px;
+            color: #0b0c10;
+            font-family: 'Inter', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .calc-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 252, 241, 0.3);
+        }
+
+        /* Results */
+        .result-box {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(102, 252, 241, 0.05);
+            border: 1px solid rgba(102, 252, 241, 0.2);
+            border-radius: 12px;
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+        .result-box.show { display: block; }
+        .result-title {
+            font-weight: 700;
+            color: #66fcf1;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        .result-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 0.25rem;
+        }
+        .result-label {
+            color: #888;
+            font-size: 0.85rem;
+        }
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .result-item {
+            background: rgba(31, 40, 51, 0.5);
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .result-item .val {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #66fcf1;
+        }
+        .result-item .lbl {
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 0.25rem;
+        }
+
+        /* Progress bar for BMI */
+        .bmi-bar {
+            width: 100%;
+            height: 12px;
+            background: linear-gradient(90deg, #45a29e 0%, #66fcf1 25%, #f1c40f 50%, #e67e22 75%, #e74c3c 100%);
+            border-radius: 6px;
+            margin-top: 1rem;
+            position: relative;
+        }
+        .bmi-marker {
+            width: 4px;
+            height: 20px;
+            background: #fff;
+            border-radius: 2px;
+            position: absolute;
+            top: -4px;
+            transition: left 0.5s ease;
+            box-shadow: 0 0 8px rgba(255,255,255,0.5);
+        }
+        .bmi-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+            font-size: 0.7rem;
+            color: #888;
+        }
+
+        /* Workout plan */
+        .workout-day {
+            background: rgba(11, 12, 16, 0.4);
+            border: 1px solid rgba(102, 252, 241, 0.1);
+            border-radius: 10px;
+            padding: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+        .workout-day h4 {
+            color: #66fcf1;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        .workout-day p {
+            color: #c5c6c7;
+            font-size: 0.9rem;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        .app-footer {
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+            border-top: 1px solid rgba(102, 252, 241, 0.1);
+            font-size: 0.85rem;
+            color: #666;
+        }
+        .app-footer a { color: #66fcf1; text-decoration: none; }
+        .app-footer a:hover { text-decoration: underline; }
+
+        @media (max-width: 600px) {
+            .form-row { grid-template-columns: 1fr; }
+            .result-value { font-size: 2rem; }
+            .app-header h1 { font-size: 1.6rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="app-nav">
+        <span class="brand">FitCalc</span>
+        <div class="nav-links-right">
+            <a href="index.html">Home</a>
+            <a href="resume.html">Resume</a>
+            <a href="scratch.html">Scratch Page</a>
+            <a href="scratch.html#data">Sales Dashboard</a>
+            <a href="app.html" class="active-page">Fitness App</a>
+        </div>
+    </nav>
+
+    <div class="app-container">
+        <div class="app-header">
+            <h1>Fitness Simulator</h1>
+            <p>Calculate your BMI, daily calorie needs, and get a personalized workout plan.</p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tab-container">
+            <button class="tab-btn active" onclick="switchTab('bmi')">BMI Calculator</button>
+            <button class="tab-btn" onclick="switchTab('calorie')">Calorie Calculator</button>
+            <button class="tab-btn" onclick="switchTab('workout')">Workout Generator</button>
+        </div>
+
+        <!-- BMI Calculator -->
+        <div id="bmi" class="calc-card active">
+            <h2>BMI Calculator</h2>
+            <p class="subtitle">Body Mass Index helps assess whether your weight is in a healthy range.</p>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Height (inches)</label>
+                    <input type="number" id="bmi-height" placeholder="e.g., 70" min="36" max="96">
+                </div>
+                <div class="form-group">
+                    <label>Weight (lbs)</label>
+                    <input type="number" id="bmi-weight" placeholder="e.g., 170" min="50" max="800">
+                </div>
+            </div>
+            <button class="calc-btn" onclick="calculateBMI()">Calculate BMI</button>
+            <div id="bmi-result" class="result-box">
+                <p class="result-title">Your Results</p>
+                <div style="text-align: center;">
+                    <div class="result-value" id="bmi-value">--</div>
+                    <div class="result-label" id="bmi-category">--</div>
+                </div>
+                <div class="bmi-bar">
+                    <div class="bmi-marker" id="bmi-marker"></div>
+                </div>
+                <div class="bmi-labels">
+                    <span>Underweight</span>
+                    <span>Normal</span>
+                    <span>Overweight</span>
+                    <span>Obese</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calorie Calculator -->
+        <div id="calorie" class="calc-card">
+            <h2>Daily Calorie Calculator</h2>
+            <p class="subtitle">Estimate your Total Daily Energy Expenditure (TDEE) using the Mifflin-St Jeor equation.</p>
+            <div class="form-group">
+                <label>Gender</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="cal-gender" value="male" checked> Male</label>
+                    <label><input type="radio" name="cal-gender" value="female"> Female</label>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Age (years)</label>
+                    <input type="number" id="cal-age" placeholder="e.g., 25" min="10" max="120">
+                </div>
+                <div class="form-group">
+                    <label>Weight (lbs)</label>
+                    <input type="number" id="cal-weight" placeholder="e.g., 170" min="50" max="800">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Height (inches)</label>
+                    <input type="number" id="cal-height" placeholder="e.g., 70" min="36" max="96">
+                </div>
+                <div class="form-group">
+                    <label>Activity Level</label>
+                    <select id="cal-activity">
+                        <option value="1.2">Sedentary (little or no exercise)</option>
+                        <option value="1.375">Lightly Active (1-3 days/week)</option>
+                        <option value="1.55" selected>Moderately Active (3-5 days/week)</option>
+                        <option value="1.725">Very Active (6-7 days/week)</option>
+                        <option value="1.9">Extremely Active (athlete/physical job)</option>
+                    </select>
+                </div>
+            </div>
+            <button class="calc-btn" onclick="calculateCalories()">Calculate Calories</button>
+            <div id="cal-result" class="result-box">
+                <p class="result-title">Your Daily Calorie Needs</p>
+                <div style="text-align: center;">
+                    <div class="result-value" id="cal-tdee">--</div>
+                    <div class="result-label">calories/day (maintenance)</div>
+                </div>
+                <div class="result-grid">
+                    <div class="result-item">
+                        <div class="val" id="cal-lose">--</div>
+                        <div class="lbl">Lose Weight</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="val" id="cal-maintain">--</div>
+                        <div class="lbl">Maintain</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="val" id="cal-gain">--</div>
+                        <div class="lbl">Gain Muscle</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="val" id="cal-protein">--</div>
+                        <div class="lbl">Protein (g/day)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Workout Generator -->
+        <div id="workout" class="calc-card">
+            <h2>Workout Plan Generator</h2>
+            <p class="subtitle">Get a personalized weekly workout plan based on your fitness goal and experience level.</p>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Fitness Goal</label>
+                    <select id="wk-goal">
+                        <option value="lose">Lose Weight</option>
+                        <option value="build" selected>Build Muscle</option>
+                        <option value="endurance">Improve Endurance</option>
+                        <option value="general">General Fitness</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Experience Level</label>
+                    <select id="wk-level">
+                        <option value="beginner">Beginner</option>
+                        <option value="intermediate" selected>Intermediate</option>
+                        <option value="advanced">Advanced</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Days Per Week</label>
+                <select id="wk-days">
+                    <option value="3">3 days</option>
+                    <option value="4" selected>4 days</option>
+                    <option value="5">5 days</option>
+                    <option value="6">6 days</option>
+                </select>
+            </div>
+            <button class="calc-btn" onclick="generateWorkout()">Generate My Plan</button>
+            <div id="wk-result" class="result-box"></div>
+        </div>
+    </div>
+
+    <div class="app-footer">
+        <p>Built with AI assistance as a web development project.</p>
+        <p><a href="index.html">Home</a> &nbsp;|&nbsp; <a href="resume.html">Resume</a> &nbsp;|&nbsp; <a href="scratch.html">Scratch Page</a> &nbsp;|&nbsp; <a href="scratch.html#data">Sales Dashboard</a></p>
+        <p>&copy; 2026 Max Benson. All rights reserved.</p>
+    </div>
+
+    <script>
+        // Tab switching
+        function switchTab(tabId) {
+            document.querySelectorAll('.calc-card').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // BMI Calculator
+        function calculateBMI() {
+            const height = parseFloat(document.getElementById('bmi-height').value);
+            const weight = parseFloat(document.getElementById('bmi-weight').value);
+
+            if (!height || !weight || height <= 0 || weight <= 0) {
+                alert('Please enter valid height and weight values.');
+                return;
+            }
+
+            const bmi = (weight / (height * height)) * 703;
+            let category = '';
+            let color = '';
+
+            if (bmi < 18.5) { category = 'Underweight'; color = '#45a29e'; }
+            else if (bmi < 25) { category = 'Normal Weight'; color = '#66fcf1'; }
+            else if (bmi < 30) { category = 'Overweight'; color = '#f1c40f'; }
+            else { category = 'Obese'; color = '#e74c3c'; }
+
+            document.getElementById('bmi-value').textContent = bmi.toFixed(1);
+            document.getElementById('bmi-value').style.color = color;
+            document.getElementById('bmi-category').textContent = category;
+
+            // Position marker on gradient bar (BMI 10-45 range mapped to 0-100%)
+            const percent = Math.min(Math.max((bmi - 10) / 35 * 100, 0), 100);
+            document.getElementById('bmi-marker').style.left = percent + '%';
+
+            document.getElementById('bmi-result').classList.add('show');
+        }
+
+        // Calorie Calculator (Mifflin-St Jeor)
+        function calculateCalories() {
+            const gender = document.querySelector('input[name="cal-gender"]:checked').value;
+            const age = parseFloat(document.getElementById('cal-age').value);
+            const weight = parseFloat(document.getElementById('cal-weight').value);
+            const height = parseFloat(document.getElementById('cal-height').value);
+            const activity = parseFloat(document.getElementById('cal-activity').value);
+
+            if (!age || !weight || !height) {
+                alert('Please fill in all fields.');
+                return;
+            }
+
+            // Convert to metric
+            const weightKg = weight * 0.453592;
+            const heightCm = height * 2.54;
+
+            // Mifflin-St Jeor
+            let bmr;
+            if (gender === 'male') {
+                bmr = (10 * weightKg) + (6.25 * heightCm) - (5 * age) + 5;
+            } else {
+                bmr = (10 * weightKg) + (6.25 * heightCm) - (5 * age) - 161;
+            }
+
+            const tdee = Math.round(bmr * activity);
+            const protein = Math.round(weightKg * 1.8);
+
+            document.getElementById('cal-tdee').textContent = tdee.toLocaleString();
+            document.getElementById('cal-lose').textContent = (tdee - 500).toLocaleString();
+            document.getElementById('cal-maintain').textContent = tdee.toLocaleString();
+            document.getElementById('cal-gain').textContent = (tdee + 300).toLocaleString();
+            document.getElementById('cal-protein').textContent = protein + 'g';
+
+            document.getElementById('cal-result').classList.add('show');
+        }
+
+        // Workout Generator
+        function generateWorkout() {
+            const goal = document.getElementById('wk-goal').value;
+            const level = document.getElementById('wk-level').value;
+            const days = parseInt(document.getElementById('wk-days').value);
+
+            const workouts = {
+                lose: {
+                    beginner: [
+                        { name: 'Full Body Circuit', desc: 'Bodyweight squats (3x12), Push-ups (3x8), Lunges (3x10 each), Plank (3x30s), Jumping jacks (3x20)' },
+                        { name: 'Cardio & Core', desc: 'Brisk walk or jog (25 min), Bicycle crunches (3x15), Mountain climbers (3x12), Dead bugs (3x10 each side)' },
+                        { name: 'Low Impact Cardio', desc: 'Cycling or swimming (30 min), Glute bridges (3x15), Wall sit (3x30s), Calf raises (3x15)' },
+                        { name: 'Active Recovery', desc: 'Yoga or stretching (30 min), Light walk (20 min), Foam rolling' },
+                        { name: 'HIIT Lite', desc: '30s high knees / 30s rest x 8 rounds, followed by 3x10 burpee modifications, cool-down stretching' },
+                        { name: 'Outdoor Cardio', desc: 'Hiking or brisk walking (45 min), Bodyweight squats at rest stops (3x10), Deep breathing exercises' }
+                    ],
+                    intermediate: [
+                        { name: 'HIIT Cardio', desc: '40s work / 20s rest: Burpees, jump squats, mountain climbers, high knees, tuck jumps. 4 rounds total.' },
+                        { name: 'Upper Body + Cardio', desc: 'Dumbbell press (4x10), Rows (4x10), Push-ups (3x15), Arnold press (3x10), 15 min jump rope intervals' },
+                        { name: 'Lower Body Burn', desc: 'Goblet squats (4x12), Romanian deadlifts (4x10), Walking lunges (3x12 each), Box jumps (3x8), Wall sit (3x45s)' },
+                        { name: 'Core & Cardio Mix', desc: 'Running intervals (1 min fast / 1 min easy x 10), Russian twists (3x20), Leg raises (3x12), Plank (3x60s)' },
+                        { name: 'Full Body Metabolic', desc: 'Kettlebell swings (4x15), Thrusters (3x12), Renegade rows (3x10), Battle ropes (3x30s), Rowing (10 min)' },
+                        { name: 'Endurance Cardio', desc: 'Steady-state run or bike (40 min), Ab circuit: V-ups, flutter kicks, dead bugs (3x12 each)' }
+                    ],
+                    advanced: [
+                        { name: 'Intense HIIT', desc: 'Tabata: 20s max effort / 10s rest x 8 for burpees, box jumps, sprints, clean & press. 2-min rest between exercises.' },
+                        { name: 'Heavy Compound + Cardio', desc: 'Barbell squats (5x5), Deadlifts (5x5), Bench press (4x8), 20 min assault bike intervals' },
+                        { name: 'Plyometric Power', desc: 'Depth jumps (4x6), Clap push-ups (4x8), Box jump overs (4x10), Lateral bounds (4x8), Sprint intervals (8x100m)' },
+                        { name: 'Olympic Lifting + HIIT', desc: 'Power cleans (5x3), Snatches (5x3), Front squats (4x6), 15 min EMOM: 5 burpees + 10 KB swings' },
+                        { name: 'Competition Prep', desc: 'AM: 5K tempo run. PM: Circuit of thrusters, pull-ups, box jumps, rowing (5 rounds for time)' },
+                        { name: 'Active Recovery', desc: 'Yoga or mobility flow (45 min), Light swimming (20 min), Foam rolling and stretching' }
+                    ]
+                },
+                build: {
+                    beginner: [
+                        { name: 'Push Day', desc: 'Dumbbell bench press (3x10), Overhead press (3x10), Incline press (3x10), Tricep dips (3x8), Lateral raises (3x12)' },
+                        { name: 'Pull Day', desc: 'Lat pulldowns (3x10), Dumbbell rows (3x10 each), Face pulls (3x12), Bicep curls (3x10), Hammer curls (3x10)' },
+                        { name: 'Leg Day', desc: 'Goblet squats (3x12), Leg press (3x12), Romanian deadlifts (3x10), Leg curls (3x12), Calf raises (3x15)' },
+                        { name: 'Full Body', desc: 'Bench press (3x8), Barbell rows (3x8), Squats (3x8), Overhead press (3x8), Planks (3x45s)' },
+                        { name: 'Upper Focus', desc: 'Push-ups (3x max), Chin-ups (3x max), Dumbbell press (3x10), Cable rows (3x12), Tricep pushdowns (3x12)' },
+                        { name: 'Lower Focus', desc: 'Sumo squats (3x12), Hip thrusts (3x12), Step-ups (3x10 each), Leg extensions (3x12), Seated calf raises (3x15)' }
+                    ],
+                    intermediate: [
+                        { name: 'Chest & Triceps', desc: 'Barbell bench (4x8), Incline dumbbell press (4x10), Cable flies (3x12), Dips (3x10), Skull crushers (3x10), Overhead extension (3x12)' },
+                        { name: 'Back & Biceps', desc: 'Deadlifts (4x6), Pull-ups (4x8), Barbell rows (4x8), Cable rows (3x12), Barbell curls (3x10), Incline curls (3x10)' },
+                        { name: 'Legs & Shoulders', desc: 'Squats (4x8), Romanian deadlifts (4x8), Leg press (3x12), Military press (4x8), Lateral raises (4x12), Rear delt flies (3x12)' },
+                        { name: 'Upper Power', desc: 'Bench press (5x5), Barbell rows (5x5), Overhead press (4x6), Weighted pull-ups (4x6), Dips (3x10)' },
+                        { name: 'Lower Power', desc: 'Back squats (5x5), Front squats (4x6), Sumo deadlifts (4x6), Walking lunges (3x12 each), Calf raises (4x15)' },
+                        { name: 'Arms & Accessories', desc: 'Close-grip bench (4x8), Barbell curls (4x8), Rope pushdowns (3x12), Hammer curls (3x10), Face pulls (3x15), Lateral raises (3x12)' }
+                    ],
+                    advanced: [
+                        { name: 'Heavy Chest', desc: 'Bench press (5x5, 1x3 heavy), Incline barbell (4x6), Weighted dips (4x8), Cable crossovers (4x12), Pec deck (3x12)' },
+                        { name: 'Heavy Back', desc: 'Deadlifts (5x3), Weighted pull-ups (4x6), Pendlay rows (4x6), T-bar rows (4x8), Straight-arm pulldowns (3x12)' },
+                        { name: 'Legs: Quad Focus', desc: 'Back squats (5x5), Front squats (4x6), Hack squats (4x8), Leg extensions (4x12), Sissy squats (3x10)' },
+                        { name: 'Shoulders & Arms', desc: 'Push press (5x5), Arnold press (4x8), Upright rows (3x10), Supersets: curls + pushdowns (4x10 each), 21s' },
+                        { name: 'Legs: Posterior Chain', desc: 'Romanian deadlifts (5x6), Hip thrusts (4x8), Nordic curls (3x6), Good mornings (3x10), Standing calf raises (5x12)' },
+                        { name: 'Hypertrophy Full Body', desc: 'Incline press (3x12), Cable rows (3x12), Leg press (3x15), Lateral raises (4x15), Face pulls (3x15), Planks (3x60s)' }
+                    ]
+                },
+                endurance: {
+                    beginner: [
+                        { name: 'Easy Run + Core', desc: 'Jog at conversational pace (20-25 min), Planks (3x30s), Dead bugs (3x10), Glute bridges (3x12)' },
+                        { name: 'Cross-Training', desc: 'Cycling or swimming (30 min moderate), Bodyweight squats (3x15), Push-ups (3x8)' },
+                        { name: 'Interval Introduction', desc: 'Walk 2 min / Jog 1 min x 10, then stretching and cool-down (10 min)' },
+                        { name: 'Long Slow Distance', desc: 'Walk/jog at easy pace (35-40 min). Focus on keeping a steady effort. Light stretching after.' },
+                        { name: 'Strength for Runners', desc: 'Lunges (3x10 each), Step-ups (3x10 each), Calf raises (3x15), Plank (3x45s), Side plank (3x30s each)' },
+                        { name: 'Active Recovery', desc: 'Easy walk (20 min), Yoga or deep stretching (20 min), Foam rolling' }
+                    ],
+                    intermediate: [
+                        { name: 'Tempo Run', desc: 'Warm-up jog (10 min), Tempo pace run (20 min at "comfortably hard"), Cool-down jog (10 min)' },
+                        { name: 'Interval Training', desc: 'Warm-up (10 min), 6x800m at 5K pace with 90s recovery jog, Cool-down (10 min)' },
+                        { name: 'Long Run', desc: 'Steady easy pace (60-75 min). Practice fueling strategy. Stretch and foam roll post-run.' },
+                        { name: 'Cross-Training + Strength', desc: 'Cycling (40 min), then: squats (3x12), deadlifts (3x10), planks (3x60s), calf raises (3x15)' },
+                        { name: 'Hill Repeats', desc: 'Warm-up (10 min), 8x60s uphill sprints with jog-down recovery, Cool-down (10 min)' },
+                        { name: 'Recovery Run', desc: 'Very easy jog (25-30 min), Mobility drills, Hip flexor stretches, Foam rolling' }
+                    ],
+                    advanced: [
+                        { name: 'VO2 Max Intervals', desc: 'Warm-up (15 min), 5x1000m at 3K-5K pace with 2 min recovery, Cool-down (15 min)' },
+                        { name: 'Lactate Threshold', desc: 'Warm-up (15 min), 2x20 min at threshold pace with 5 min recovery, Cool-down (15 min)' },
+                        { name: 'Long Run w/ Progression', desc: 'Easy pace (60 min), then increase to marathon pace for final 20 min. Total: 80 min.' },
+                        { name: 'Speed Work', desc: 'Warm-up (15 min), 12x400m at mile pace with 60s recovery, Cool-down (15 min)' },
+                        { name: 'Cross-Training Intensity', desc: 'Swim intervals (45 min) or cycling HIIT (45 min), Core circuit (15 min)' },
+                        { name: 'Recovery & Mobility', desc: 'Easy jog (20 min), Yoga (30 min), Ice bath or contrast therapy, Sleep optimization' }
+                    ]
+                },
+                general: {
+                    beginner: [
+                        { name: 'Full Body Strength', desc: 'Goblet squats (3x10), Push-ups (3x8), Dumbbell rows (3x10), Lunges (3x8 each), Plank (3x30s)' },
+                        { name: 'Cardio & Flexibility', desc: 'Brisk walk or light jog (25 min), Full body stretching routine (15 min)' },
+                        { name: 'Upper Body Focus', desc: 'Dumbbell press (3x10), Lat pulldowns (3x10), Shoulder press (3x10), Bicep curls (3x10), Tricep dips (3x8)' },
+                        { name: 'Lower Body & Core', desc: 'Squats (3x12), Glute bridges (3x12), Step-ups (3x10 each), Mountain climbers (3x10), Plank (3x40s)' },
+                        { name: 'Active Fun Day', desc: 'Sports, hiking, swimming, or cycling (30-45 min). Focus on movement you enjoy!' },
+                        { name: 'Yoga & Mobility', desc: 'Beginner yoga flow (30 min), Foam rolling (10 min), Deep breathing exercises (5 min)' }
+                    ],
+                    intermediate: [
+                        { name: 'Push Day', desc: 'Bench press (4x8), Overhead press (4x8), Incline dumbbell press (3x10), Lateral raises (3x12), Tricep pushdowns (3x12)' },
+                        { name: 'Pull Day', desc: 'Barbell rows (4x8), Pull-ups (4x8), Face pulls (3x12), Bicep curls (3x10), Hammer curls (3x10)' },
+                        { name: 'Legs', desc: 'Squats (4x8), Romanian deadlifts (4x8), Leg press (3x12), Lunges (3x10 each), Calf raises (3x15)' },
+                        { name: 'Cardio & Core', desc: 'Running or cycling (30 min intervals), Russian twists (3x20), Leg raises (3x12), Plank (3x60s)' },
+                        { name: 'Full Body Circuit', desc: '4 rounds: 10 thrusters, 10 pull-ups, 15 push-ups, 20 air squats, 200m run. Rest 2 min between rounds.' },
+                        { name: 'Flexibility & Recovery', desc: 'Yoga (40 min), Foam rolling (15 min), Light stretching, Meditation (10 min)' }
+                    ],
+                    advanced: [
+                        { name: 'Strength: Upper', desc: 'Bench press (5x5), Weighted pull-ups (5x5), Push press (4x6), Pendlay rows (4x6), Dips (3x max)' },
+                        { name: 'Strength: Lower', desc: 'Back squats (5x5), Deadlifts (5x3), Front squats (4x6), Bulgarian split squats (3x8 each), Ab wheel (3x10)' },
+                        { name: 'HIIT & Conditioning', desc: '5 rounds for time: 15 thrusters, 12 pull-ups, 9 burpees. Then: 2000m row at moderate pace.' },
+                        { name: 'Hypertrophy Upper', desc: 'Incline press (4x12), Cable rows (4x12), Arnold press (4x10), Superset curls/pushdowns (4x12), Lateral raises (4x15)' },
+                        { name: 'Hypertrophy Lower', desc: 'Leg press (4x15), Hip thrusts (4x12), Walking lunges (3x12), Leg curls (4x12), Standing calf raises (5x12)' },
+                        { name: 'Sport & Mobility', desc: 'Sport of choice (45 min), Mobility flow (20 min), Foam rolling, Contrast shower recovery' }
+                    ]
+                }
+            };
+
+            const plan = workouts[goal][level];
+            const selectedDays = plan.slice(0, days);
+            const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+            // Spread workout days evenly
+            let scheduleDays = [];
+            if (days === 3) scheduleDays = [0, 2, 4]; // Mon, Wed, Fri
+            else if (days === 4) scheduleDays = [0, 1, 3, 4]; // Mon, Tue, Thu, Fri
+            else if (days === 5) scheduleDays = [0, 1, 2, 3, 4]; // Mon-Fri
+            else scheduleDays = [0, 1, 2, 3, 4, 5]; // Mon-Sat
+
+            let html = '<p class="result-title">Your ' + days + '-Day ' + capitalize(goal.replace('lose', 'weight loss').replace('build', 'muscle building').replace('endurance', 'endurance').replace('general', 'general fitness')) + ' Plan (' + capitalize(level) + ')</p>';
+
+            scheduleDays.forEach((dayIdx, i) => {
+                html += `
+                    <div class="workout-day">
+                        <h4>${dayNames[dayIdx]} — ${selectedDays[i].name}</h4>
+                        <p>${selectedDays[i].desc}</p>
+                    </div>
+                `;
+            });
+
+            html += '<p style="color: #888; font-size: 0.85rem; margin-top: 1rem;">Rest on off days. Stay hydrated and get 7-9 hours of sleep for optimal recovery.</p>';
+
+            const resultBox = document.getElementById('wk-result');
+            resultBox.innerHTML = html;
+            resultBox.classList.add('show');
+        }
+
+        function capitalize(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+    </script>
+</body>
+</html>
